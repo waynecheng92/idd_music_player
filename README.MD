@@ -13,7 +13,12 @@ source idd_final_env/bin/activate
 pip3 install -r requirement.txt
 ```
 
-#### Step4: Run application
+#### Step4: Stop running the mini-screen service
+```
+sudo systemctl stop mini-screen.service
+```
+
+#### Step5: Run application
 ```
 python musicPlayer.py 
 ```
