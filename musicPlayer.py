@@ -263,7 +263,9 @@ def checkVolume():
     global lastVolPosition
     try:
         position = -encoder.position
-        if position != lastVolPosition:
+        if position or lastVolPosition == 2147483648:
+            pygame.mixer.music.set_volume(1.0)
+        elif position != lastVolPosition:
             setVolume(position - lastVolPosition)
             lastVolPosition = position
     except IOError as e:
@@ -291,7 +293,7 @@ while True:
     )  # might need to assign font
 
     success, img = cap.read()
-    if frame_cnt % 5 == 0:
+    if frame_cnt % 2 == 0:
         img = detector.findHands(img)
         lmList = detector.findPosition(img, draw=False)
         end_time = time.time()
