@@ -1,6 +1,5 @@
 import cv2
 import time
-import numpy as np
 import HandTrackingModule as htm
 import math
 import pygame
@@ -13,31 +12,7 @@ from PIL import Image, ImageDraw, ImageFont  # , ImageSequence
 import adafruit_mpr121
 import adafruit_rgb_display.st7789 as st7789
 import qwiic_button  # sudo pip install sparkfun-qwiic-button
-from ctypes import cast, POINTER
 import os
-
-# import alsaaudio
-# m = alsaaudio.Mixer(control='Speaker', cardindex=3)
-# m.setvolume(5)
-# import subprocess
-# import time
-
-# import paho.mqtt.client as mqtt
-# import uuid
-# import ssl
-
-# # Every client needs a random ID
-# client = mqtt.Client(str(uuid.uuid1()))
-# # configure network encryption etc
-# client.tls_set(cert_reqs=ssl.CERT_NONE)
-
-# # this is the username and pw we have setup for the class
-# client.username_pw_set('idd', 'device@theFarm')
-
-# #connect to the broker
-# client.connect(
-#     'farlab.infosci.cornell.edu',
-#     port=8883)
 
 TOPIC = "IDD/playList"
 N_GENRE = 4
@@ -120,13 +95,16 @@ detector = htm.handDetector(detectionCon=int(0.7))
 # minVol = 0
 # maxVol = 100
 vol = 0
-volBar = 400
-volPer = 0
+volBar = 213
+volPer = 75
 
 conditions = {
-    (True, True, False, False, False): "play/pause",  # 1
-    (True, True, True, False, False): "next",  # 2
-    (True, True, False, True, True): "prev",  # 3
+    (True, False, False, False): "play/pause",  # 1
+    (True, False, True, True): "play/pause",  # 1
+    (True, False, False, True): "play/pause",  # 1
+    (True, False, True, False): "play/pause",  # 1
+    (True, True, False, False): "next",  # 2
+    (True, True, True, False): "prev",  # 3
 }
 
 genres = ["pop", "r&b", "kpop", "dance"]
@@ -161,16 +139,18 @@ curGenre = curSongNumber = curBackground = 0
 paused = False
 playing = False
 lastVolPosition = -encoder.position
+initsongtime = -1
 
 ################################
 
 
 def playSong(genre, song_number):
-    global playing, paused
+    global playing, paused, initsongtime
     pygame.mixer.music.load(
         f"songGenre/{genres[genre]}/{playList[genres[genre]][song_number]}.wav"
     )
     pygame.mixer.music.play()
+    initsongtime = pygame.mixer.music.get_pos()
     playing = True
     paused = False
 
@@ -197,6 +177,8 @@ def stopSong():
 
 
 def setVolume(vol):
+    global volBar
+    global volPer
     curVol = pygame.mixer.music.get_volume()
     curVol += vol / 100
     if curVol < 0:
@@ -205,7 +187,9 @@ def setVolume(vol):
         curVol = 1
     pygame.mixer.music.set_volume(curVol)
     os.system(f"amixer sset 'Master' {curVol * 100}%")
-    print(f"Current volume: {round(curVol * 100, 2)}%")
+    print(f"Current volume: {curVol * 100}%")
+    volBar = 400 - (curVol * 250)
+    volPer = curVol * 100
 
 
 def nextSong():
@@ -269,32 +253,40 @@ def checkGenre():
 
 def checkVolume():
     global lastVolPosition
-    if buttonB.value and not buttonA.value:
-        setVolume(10)
-    if buttonA.value and not buttonB.value:
-        setVolume(-10)
+    # if buttonB.value and not buttonA.value:
+    #     setVolume(10)
+    # if buttonA.value and not buttonB.value:
+    #     setVolume(-10)
     # global button_held
     # if not volButton.value and not button_held:
     #     button_held = True
     # if volButton.value and button_held:
     #     button_held = False
-    # setVolume(10)
-    # try:
-    #     position = -encoder.position
     #     print(lastVolPosition, position)
-    #     if position != lastVolPosition:
-    #         setVolume(position - lastVolPosition)
-    #         lastVolPosition = position
-    # except IOError as e:
-    #     return
+    #     lastVolPosition = position
+    #     setVolume(10)
+    try:
+        position = -encoder.position
+        if (
+            position >= 100 or lastVolPosition >= 100
+        ):  # handle seesaw sudden very large position
+            return
+        if position != lastVolPosition:
+            adjust_vol = (position - lastVolPosition) * 5
+            setVolume(adjust_vol)
+            # print(lastVolPosition, position)
+            lastVolPosition = position
+    except IOError as e:
+        return
 
 
 ################################
 frame_cnt = 0
 start_time = time.time()
 pygame.mixer.music.set_volume(0.75)
-
+vol_change = 0
 font = ImageFont.truetype("font/SundayGrapes.ttf", size=20)
+time_font = ImageFont.truetype("font/SundayGrapes.ttf", size=38)
 while True:
     checkGenre()
     checkBackground()
@@ -310,10 +302,12 @@ while True:
     draw_on_image.text(
         (10, 30), split_song_name[1], fill="#fff", font=font
     )  # might need to assign font
+    played_millis = pygame.mixer.music.get_pos() - initsongtime // 1000
+    seconds = int((played_millis / 1000) % 60)
+    minutes = int((played_millis / (1000 * 60)) % 60)
     draw_on_image.text(
-        (55, 60), str(pygame.mixer.music.get_pos()), fill="#fff"
+        (55, 62), "{:02d}:{:02d}".format(minutes, seconds), fill="#fff", font=time_font
     )  # might need to assign font
-
     success, img = cap.read()
     if frame_cnt % 2 == 0:
         img = detector.findHands(img)
@@ -328,40 +322,31 @@ while True:
             ringX, ringY = lmList[16][1], lmList[16][2]
             pinkyX, pinkyY = lmList[20][1], lmList[20][2]
 
-            cx, cy = (thumbX + pointerX) // 2, (thumbY + pointerY) // 2
-
-            cv2.circle(img, (thumbX, thumbY), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (pointerX, pointerY), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (middleX, middleY), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (ringX, ringY), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (pinkyX, pinkyY), 15, (255, 0, 255), cv2.FILLED)
-            cv2.line(img, (thumbX, thumbY), (pointerX, pointerY), (255, 0, 255), 3)
-            cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+            # cx, cy = (thumbX + pointerX) // 2, (thumbY + pointerY) // 2
+            # cv2.circle(img, (thumbX, thumbY), 15, (255, 0, 255), cv2.FILLED)
+            # cv2.circle(img, (pointerX, pointerY), 15, (255, 0, 255), cv2.FILLED)
+            # cv2.circle(img, (middleX, middleY), 15, (255, 0, 255), cv2.FILLED)
+            # cv2.circle(img, (ringX, ringY), 15, (255, 0, 255), cv2.FILLED)
+            # cv2.circle(img, (pinkyX, pinkyY), 15, (255, 0, 255), cv2.FILLED)
+            # cv2.line(img, (thumbX, thumbY), (pointerX, pointerY), (255, 0, 255), 3)
+            # cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
             len_calc = lambda x1, y1, x2, y2: math.hypot(x2 - x1, y2 - y1)
             length = len_calc(thumbX, thumbY, pointerX, pointerY)
-            length1 = len_calc(pointerX, pointerY, middleX, middleY)
-            length2 = len_calc(middleX, middleY, ringX, ringY)
-            length3 = len_calc(ringX, ringY, pinkyX, pinkyY)
-            length4 = len_calc(thumbX, thumbY, ringX, ringY)
-
-            key = (
-                length > 100,
-                length1 > 100,
-                length2 > 100,
-                length3 > 100,
-                length4 > 100,
-            )
-            # print(key)
-            # One operation within per 5 seconds
-            if end_time - start_time > 5:
+            length1 = len_calc(thumbX, thumbY, middleX, middleY)
+            length2 = len_calc(thumbX, thumbY, ringX, ringY)
+            length3 = len_calc(thumbX, thumbY, pinkyX, pinkyY)
+            base = min([length, length1, length2, length3]) * 2
+            key = (length > base, length1 > base, length2 > base, length3 > base)
+            # One operation within per 3 seconds
+            if end_time - start_time > 3:
+                # print(key)
                 if key in conditions:
                     detectAction(conditions[key])
                 start_time = time.time()
 
-            if length < 50:
-                cv2.circle(img, (cx, cy), 15, (0, 255, 0), cv2.FILLED)
-
+            # if length < 50:
+            #     cv2.circle(img, (cx, cy), 15, (0, 255, 0), cv2.FILLED)
         cv2.rectangle(img, (50, 150), (85, 400), (255, 0, 0), 3)
         cv2.rectangle(img, (50, int(volBar)), (85, 400), (255, 0, 0), cv2.FILLED)
         cv2.putText(
