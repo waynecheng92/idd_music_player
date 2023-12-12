@@ -22,3 +22,5 @@ sudo systemctl stop mini-screen.service
 ```
 python musicPlayer.py 
 ```
+
+Documentation 
