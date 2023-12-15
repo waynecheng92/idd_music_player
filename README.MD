@@ -130,6 +130,7 @@ The user is able to select which genre of music they would like to listen to, fr
 COMPUTER VIEW
 
 ![IMG_3C658F6338FD-1](https://hackmd.io/_uploads/B1fLPDUUT.jpg)
+
 On the computer screen, the user is able to see what the camera is capturing of their gesture. In addition, the user can see the text output of their actions. For example, if they use the "1" gesture, the display will show whether the song is paused or unpaused. The user is able to know the state of the program. 
  
 **Final Video**
