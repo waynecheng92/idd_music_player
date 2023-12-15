@@ -105,7 +105,7 @@ Final Design:
 ![IMG_6FFA3D22DBAF-1](https://hackmd.io/_uploads/HkAHf8I8p.jpg)
 
 
-*revised from initial design due to spatial constraint, we had to move some component around so they can all fit within the box 
+*revised from initial design due to spatial constraint, we had to move some components around so they can all fit within the box 
 
 
 **Physical Design of Device**
