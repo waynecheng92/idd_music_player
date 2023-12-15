@@ -15,7 +15,7 @@ Song Categories:
 4) Dance 
 
 
-**Timeline**
+Timeline:
 Nov 14:  Settle the plan of the initial proposal
 Nov 21: Finish creating all the main functionalities of the music player
 Dec 4: Test the practical effect and troubleshoot the problem
