@@ -134,7 +134,9 @@ COMPUTER VIEW
 On the computer screen, the user is able to see what the camera is capturing of their gesture. In addition, the user can see the text output of their actions. For example, if they use the "1" gesture, the display will show whether the song is paused or unpaused. The user is able to know the state of the program. 
  
 **Final Video**
+
 [Interaction Video](https://drive.google.com/file/d/1q5V5CG8MNcNWExYI-8BD0-7sHzcoy62w/view?usp=sharing)
+
 In the video shows a user interacting with the music player with hand gesture. The user first holds up "1" gesture to unpause or pause the song. When the music start playing, the MiniPiTFT will show the name of the song name, artist name, and playing time. After that he user holds up "2" gesture to play the next song. Then the user holds up "3" gesture to play the previous song.
 
 For changing 4 available genres (from left to right: Dance, Kpop, R&B, Pop) of the playing song, the user clicks the 4 sensors on top.
