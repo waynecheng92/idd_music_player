@@ -1,4 +1,21 @@
-## Guideline
+# IDD Final Project
+Amber Tsao (ct649), Aris Huang (th625), Julia Lin (jtl236), Sherri Lin (yl3658), Wayne Cheng (cc2796), Ifeng Wu (iw84)
+
+**Project Plan**
+
+**Big Idea**
+
+Similar to what we have previously done for the observant system lab, our final project will be primarily focusing on utilizing computer vision to detect hand gestures as a new form of interaction to tell the music player to change to previous or next songs. We will use the "1" gesture to signify pausing or unpausing a song, the "2" gesture to signify next song, and the "3" gesture to signify the previous song. In addition, we will use the rotary encoder to adjust the volume up and down. We will also use capacitive sensor along with conductive copper tape to change the categories of the songs. On the MiniPiTFT display, we will show user’s current song and the playing time of the song. There will be button for the user to change the background of the display.
+
+
+Song Categories:
+
+1) R&B 
+2) Pop 
+3) K-Pop 
+4) Dance 
+
+## Project Setup Guideline
 
 #### Step1: Setup the hardware environment
 
@@ -22,23 +39,6 @@ sudo systemctl stop mini-screen.service
 ```
 python musicPlayer.py 
 ```
-
-# IDD Final Project
-Amber Tsao (ct649), Aris Huang (th625), Julia Lin (jtl236), Sherri Lin (yl3658), Wayne Cheng (cc2796), Ifeng Wu (iw84)
-
-**Project Plan**
-
-**Big Idea**
-
-Similar to what we have previously done for the observant system lab, our final project will be primarily focusing on utilizing computer vision to detect hand gestures as a new form of interaction to tell the music player to change to previous or next songs. We will use the "1" gesture to signify pausing or unpausing a song, the "2" gesture to signify next song, and the "3" gesture to signify the previous song. In addition, we will use the rotary encoder to adjust the volume up and down. We will also use capacitive sensor along with conductive copper tape to change the categories of the songs. On the MiniPiTFT display, we will show user’s current song and the playing time of the song. There will be button for the user to change the background of the display.
-
-
-Song Categories:
-
-1) R&B 
-2) Pop 
-3) K-Pop 
-4) Dance 
 
 
 **Timeline**
