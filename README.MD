@@ -9,36 +9,10 @@ Similar to what we have previously done for the observant system lab, our final 
 
 
 Song Categories:
-
 1) R&B 
 2) Pop 
 3) K-Pop 
 4) Dance 
-
-## Project Setup Guideline
-
-#### Step1: Setup the hardware environment
-
-#### Step2: Create a virtual environment
-```
-python -m venv idd_final_env
-source idd_final_env/bin/activate
-```
-
-#### Step3: Install required packages
-```
-pip3 install -r requirement.txt
-```
-
-#### Step4: Stop running the mini-screen service
-```
-sudo systemctl stop mini-screen.service
-```
-
-#### Step5: Run application
-```
-python musicPlayer.py 
-```
 
 
 **Timeline**
@@ -73,7 +47,30 @@ The biggest challenge that we may encounter is using the hand gesture to signal 
 **Functioning Project**
 The functioning project is a music player which users are able to interact with using hand gestures and buttons. The user is able to make the "1" gesture to signify pausing and pausing the song, the "2" gesture to signify the next song, the "3" gesture to signify the previous song. The user is also able to press on a button to change the background of the display, and press the button for the genre of music they would like to listen to.
 
+## Project Setup Guideline
 
+#### Step1: Setup the hardware environment
+
+#### Step2: Create a virtual environment
+```
+python -m venv idd_final_env
+source idd_final_env/bin/activate
+```
+
+#### Step3: Install required packages
+```
+pip3 install -r requirement.txt
+```
+
+#### Step4: Stop running the mini-screen service
+```
+sudo systemctl stop mini-screen.service
+```
+
+#### Step5: Run application
+```
+python musicPlayer.py 
+```
 
 **Documentation of Design Process**
 
